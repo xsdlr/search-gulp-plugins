@@ -12,6 +12,8 @@
       this.on('change', function () {
         store.set(this.get('name'), this);
       });
+      this.set('install', 'npm install ' + this.get('name') + ' --save-dev');
+      this.set('inputSize', this.get('install').length);
     },
     rendered: function () {
       var self = this;
@@ -152,6 +154,7 @@
       '<p class="description">' +
       '${description}' +
       '<span class="pull-right label label-${typeColor}">${type}</span>' +
+      '<code class="npm-install pull-right"><input class="npm-input pull-right" type="text" value="${install}" size="${inputSize}" readonly="readonly"/></code> ' +
       '</p>' +
       '</div>'
   );
@@ -160,6 +163,11 @@
     tagName: 'div',
     className: 'row plugin panel panel-default',
     template: pluginTemplate,
+
+    events: {
+      'mouseover .npm-input': 'sel',
+      'mouseout .npm-input': 'blur'
+    },
 
     initialize: function () {
       this.model.on('change', this.render, this);
@@ -176,7 +184,22 @@
         $el.hide();
       }
       return this;
-    }
+    },
+
+    sel: function () {
+      var $el = $(this.el);
+      var $sel = $el.find('.npm-input');
+      $sel.select();
+      $sel.click(function (e) {
+        e.preventDefault();
+      });
+    },
+
+    blur: function () {
+      var $el = $(this.el);
+      var $sel = $el.find('.npm-input');
+      $sel.blur();
+    },
   });
 
   // storage
