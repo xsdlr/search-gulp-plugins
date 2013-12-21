@@ -81,10 +81,19 @@
   var pluginList = $('.plugin-list');
 
   var pluginTemplate = _.template(
-    '<div id="plugin-${name}" class="row plugin">' +
-      '<div class="col-md-12">' +
-        '<h3><a href="${url}">${name}</a> <small>${author}</small></h3>' +
-        '${description}' +
+    '<div id="plugin-${name}" class="row plugin panel panel-default">' +
+      '<div class="col-md-1">' +
+        '<span class="star-icon glyphicon glyphicon-star center-block"></span> ' +
+        '<p class="text-center"><span class="label label-info">&gt; 9000</span></p>' +
+      '</div>' +
+      '<div class="col-md-11">' +
+        '<h3>' +
+          '<a href="${url}">${name}</a>' +
+          '<small class="pull-right">' +
+            ' repo <a href="${repoUrl}">${repo}</a>' +
+          '</small>' +
+        '</h3>' +
+        '<p class="description">${description}</p>' +
       '</div>' +
     '</div>'
   );
@@ -94,7 +103,9 @@
       name: obj.get('name'),
       description: obj.get('description'),
       author: obj.get('author'),
-      url: obj.get('url')
+      url: obj.get('url'),
+      repo: obj.get('repo'),
+      repoUrl: obj.get('repoUrl')
     }));
   });
 

@@ -23,11 +23,17 @@
     margin-top: 20px;
 }
 
-.npm-loaders {
-    display: none;
-}
-
 .plugin {
     margin-top: 30px;
     margin-bottom: 30px;
+}
+
+.plugin .star-icon {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 26px;
+}
+
+.plugin .description {
+    margin-bottom: 20px;
 }
