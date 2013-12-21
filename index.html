@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>search-gulp-plugins</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="spanner">
+            <div class="container">
+                <div class="row row-top">
+                    <div class="col-md-7">
+                        <img class="pull-left img-circle gulp-logo"
+                             src="https://raw.github.com/gulpjs/artwork/master/gulp.png" alt="gulp artwork"/>
+
+                        <h1>search gulp plugins</h1>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="search-bar input-group input-group-lg">
+                            <input type="text" class="form-control" placeholder="repo">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                  </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container plugin-list">
+        </div>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <!-- Backbone -->
+        <script src="js/lodash.compat.min.js"></script>
+        <script src="js/exoskeleton.min.js"></script>
+        <!-- github api -->
+        <script src="js/github.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
+
+        <script src="app.js"></script>
+
+        <!-- hack to load JSON from npm registry -->
+        <div class="npm-loaders">
+
+            <script src="http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpplugin%22]&endkey=[%22gulpplugin%22,{}]&group_level=3&callback=app.load.plugins"></script>
+            <script src="http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpfriendly%22]&endkey=[%22gulpfriendly%22,{}]&group_level=3&callback=app.load.plugins"></script>
+        </div>
+
+    </body>
+
+</html>
