@@ -171,9 +171,9 @@
       $el.attr('data-plugin-id', this.model.cid);
       $el.html(this.template(this.model.toJSON()));
       if(this.model.get('visible')) {
-        $el.fadeIn();
+        $el.show();
       } else {
-        $el.fadeOut();
+        $el.hide();
       }
       return this;
     }
