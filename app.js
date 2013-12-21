@@ -166,6 +166,7 @@
 
     events: {
       'mouseover .npm-input': 'sel',
+      'click .npm-input': 'sel',
       'mouseout .npm-input': 'blur'
     },
 
@@ -199,7 +200,7 @@
       var $el = $(this.el);
       var $sel = $el.find('.npm-input');
       $sel.blur();
-    },
+    }
   });
 
   // storage
