@@ -21,22 +21,26 @@
         <div class="spanner">
             <div class="container">
                 <div class="row row-top">
-                    <div class="col-md-7">
-                        <img class="pull-left img-circle gulp-logo"
+                    <div class="col-md-1">
+                        <img class="img-circle gulp-logo center-block"
                              src="https://raw.github.com/gulpjs/artwork/master/gulp.png" alt="gulp artwork"/>
-
-                        <h1>search gulp plugins</h1>
+                    </div>
+                    <div class="col-md-6">
+                        <h1>gulp plugins</h1>
                     </div>
                     <div class="col-md-5">
-                        <div class="search-bar input-group input-group-lg">
-                            <input type="text" class="form-control" placeholder="repo">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">
-                                        <span class="glyphicon glyphicon-search"></span>
-                                    </button>
-                                  </span>
+                        <div class="search-bar input-group-lg">
+                            <input type="text" class="form-control plugin-search" placeholder="search plugins">
+
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="container plugin-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="pull-right"><em><span class="count text-muted">0 plugins</span></em></h4>
                 </div>
             </div>
         </div>
@@ -45,22 +49,14 @@
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://code.jquery.com/jquery.js"></script>
-        <!-- Backbone -->
-        <script src="js/lodash.compat.min.js"></script>
-        <script src="js/exoskeleton.min.js"></script>
-        <!-- github api -->
-        <script src="js/github.js"></script>
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/store.min.js"></script>
+        <!-- Backbone -->
+        <script src="js/lodash.min.js"></script>
+        <script src="js/exoskeleton.min.js"></script>
 
         <script src="app.js"></script>
-
-        <!-- hack to load JSON from npm registry -->
-        <div class="npm-loaders">
-
-            <script src="http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpplugin%22]&endkey=[%22gulpplugin%22,{}]&group_level=3&callback=app.load.plugins"></script>
-            <script src="http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpfriendly%22]&endkey=[%22gulpfriendly%22,{}]&group_level=3&callback=app.load.plugins"></script>
-        </div>
 
     </body>
 
