@@ -186,6 +186,28 @@
     repos.add(r);
   });
 
+  // all for the progress, baby
+  NProgress.configure({ trickleRate: 0.17, trickleSpeed: 400 });
+  var completed = [];
+  completed.events = {};
+  _.extend(completed.events, Backbone.Events);
+
+  completed.append = function (obj) {
+    completed.push(obj);
+    completed.events.trigger('append');
+  };
+
+  completed.remove = function (name) {
+    completed.splice(completed.indexOf(name), 1);
+    completed.events.trigger('remove');
+  };
+
+  completed.events.on('remove', function () {
+    if(completed.length == 0) {
+      NProgress.done();
+    }
+  });
+
   // add a plugin list
   var plugins = function (data) {
     _(data.rows)
@@ -197,6 +219,7 @@
           dataType: 'jsonp',
           success: fetch
         });
+        completed.append(name);
       });
   };
 
@@ -234,17 +257,17 @@
       var r = new Repo(obj);
       repos.add(r);
     }
-
+    completed.remove(obj.name);
   };
 
   var req = function () {
     console.log('refreshing plugins...');
+    NProgress.start();
     $.ajax({
       url: 'http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpplugin%22]&endkey=[%22gulpplugin%22,{}]&group_level=3',
       dataType: 'jsonp',
       success: plugins
     });
-
     $.ajax({
       url: 'http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpfriendly%22]&endkey=[%22gulpfriendly%22,{}]&group_level=3',
       dataType: 'jsonp',
