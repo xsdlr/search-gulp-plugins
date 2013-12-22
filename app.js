@@ -312,7 +312,7 @@
     setTimeout(req, 50);
   });
 
-  // refresh every 20 seconds
-  setInterval(req, 20 * 1000);
+  // refresh every minute
+  setInterval(req, 1 * 60 * 1000);
 
 })();
