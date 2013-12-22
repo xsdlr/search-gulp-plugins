@@ -1,6 +1,7 @@
 (function () {
 
   // models
+  var RepoListView;
   var Repo = Backbone.Model.extend({
     initialize: function () {
       this.set('noRepo',
@@ -106,7 +107,7 @@
 
   var infoView = new InfoView();
 
-  var RepoListView = Backbone.View.extend({
+  RepoListView = Backbone.View.extend({
     el: '.plugin-list',
     tagName: 'div',
     className: 'container',
@@ -117,6 +118,7 @@
     initialize: function () {
       this.collection.on('add', this.render, this);
       this.collection.on('sort', this.render, this);
+      this.views = {}
     },
 
     render: function () {
@@ -128,8 +130,8 @@
           return !plugin.rendered();
         }).each(function (plugin) {
           var item = new RepoListItemView({model: plugin});
+          self.views[plugin.cid] = item;
           $el.append(item.render().el);
-          self.total +=1;
         });
 
       return this;
@@ -139,11 +141,11 @@
   var listView = new RepoListView();
 
   var pluginTemplate = _.template(
-    '<div class="col-md-1">' +
+    /*'<div class="col-md-1">' +
       '<span class="star-icon glyphicon glyphicon-star center-block"></span> ' +
       '<div class="text-center"><span class="label label-default">&gt; 9000</span></div>' +
-      '</div>' +
-      '<div class="col-md-11">' +
+    '</div>' +*/
+    '<div class="col-md-12">' +
       '<h3>' +
       '<a href="${url}">${name}</a> ' +
       '<small>version ${version}</small>' +
@@ -156,7 +158,7 @@
       '<span class="pull-right label label-${typeColor}">${type}</span>' +
       '<code class="npm-install pull-right"><input class="npm-input pull-right" type="text" value="${install}" size="${inputSize}" readonly="readonly"/></code> ' +
       '</p>' +
-      '</div>'
+    '</div>'
   );
 
   var RepoListItemView = Backbone.View.extend({
@@ -263,8 +265,15 @@
       obj.repo = regexp.exec(url)[1].slice(1).replace(/\.git$/, '');
       obj.repoUrl = 'https://github.com/' + obj.repo;
     } else {
-      obj.repo = '';
-      obj.repoUrl = '';
+      var url = data.versions[obj.version].homepage;
+      if(url && url.contains('github')) {
+        var regexp = /github\.com(.*)/;
+        obj.repo = regexp.exec(url)[1].slice(1).replace(/\.git$/, '');
+        obj.repoUrl = 'https://github.com/' + obj.repo;
+      } else {
+        obj.repo = '';
+        obj.repoUrl = '';
+      }
     }
 
     obj.url = 'https://npmjs.org/package/' + obj.name;
