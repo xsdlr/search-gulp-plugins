@@ -9,26 +9,11 @@
         this.get('type') === 'gulpplugin' ? 'info' : 'success');
       this.set('info', this.get('description') + this.get('name') + this.get('version') + this.get('type') + this.get('repo'));
       this.set('visible', true);
-      this.on('change', function () {
-        store.set(this.get('name'), this);
-      });
-      this.set('install', 'npm install ' + this.get('name') + ' --save-dev');
-      this.set('inputSize', this.get('install').length);
-    },
-    rendered: function () {
-      var self = this;
-      var children = $(listView.el).children();
-      return children.filter(function (index) {
-        return $(this).attr('data-plugin-id') == self.cid;
-      }).size() != 0;
     }
   });
 
   var RepoList = Backbone.Collection.extend({
     initialize: function () {
-      this.on('add', function (model) {
-        store.set(model.get('name'), model);
-      });
       this.comparator = 'name';
     },
     model: Repo
@@ -115,29 +100,31 @@
     collection: repos,
 
     initialize: function () {
-      this.collection.on('add', this.render, this);
+      this.views = [];
       this.collection.on('sort', this.render, this);
-      this.views = {}
     },
 
     render: function () {
       var $el = $(this.el);
       var self = this;
 
-      _(this.collection.models)
-        .filter(function (plugin) {
-          return !plugin.rendered();
-        }).each(function (plugin) {
-          var item = new RepoListItemView({model: plugin});
-          self.views[plugin.cid] = item;
-          $el.append(item.render().el);
-        });
+      this.views.forEach(function (view) {
+        view.remove();
+      });
+      this.views = [];
+
+      this.collection.each(function (plugin) {
+
+        var item = new RepoListItemView({model: plugin});
+        self.views.push(item);
+        $el.append(item.render().el);
+      });
 
       return this;
     }
   });
 
-  var listView = new RepoListView();
+  var listView;
 
   var pluginTemplate = _.template(
     /*'<div class="col-md-1">' +
@@ -155,7 +142,6 @@
       '<p class="description">' +
       '${description}' +
       '<span class="pull-right label label-${typeColor}">${type}</span>' +
-      '<code class="npm-install pull-right"><input class="npm-input pull-right" type="text" value="${install}" size="${inputSize}" readonly="readonly"/></code> ' +
       '</p>' +
     '</div>'
   );
@@ -204,12 +190,7 @@
     }
   });
 
-  // storage
-  store.forEach(function(key, val) {
-    var r = new Repo(val);
-    r.set('visible', true);
-    repos.add(r);
-  });
+  repos.sort();
 
   // all for the progress, baby
   NProgress.configure({ trickleRate: 0.17, trickleSpeed: 400 });
@@ -229,8 +210,14 @@
 
   completed.events.on('remove', function () {
     if(completed.length == 0) {
-      NProgress.done();
+      completed.events.trigger('done');
     }
+  });
+
+  completed.events.on('done', function () {
+    NProgress.done();
+    listView = new RepoListView();
+    listView.render();
   });
 
   // add a plugin list
@@ -306,11 +293,6 @@
     });
   };
 
-  $(function () {
-    setTimeout(req, 50);
-  });
-
-  // refresh every minute
-  setInterval(req, 1 * 60 * 1000);
+  req();
 
 })();
