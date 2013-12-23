@@ -268,14 +268,9 @@
       return x === 'gulpplugin' || x === 'gulpfriendly';
     })[0];
 
-    if(_(store.getAll()).keys().contains(obj.name)) {
-      _.find(repos.models, function (x) {
-        return x.get('name') === obj.name;
-      }).set(obj);
-    } else {
-      var r = new Repo(obj);
-      repos.add(r);
-    }
+    var r = new Repo(obj);
+    repos.add(r);
+
     completed.remove(obj.name);
   };
 
