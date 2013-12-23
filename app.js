@@ -1,7 +1,6 @@
 (function () {
 
   // models
-  var RepoListView;
   var Repo = Backbone.Model.extend({
     initialize: function () {
       this.set('noRepo',
@@ -107,7 +106,7 @@
 
   var infoView = new InfoView();
 
-  RepoListView = Backbone.View.extend({
+  var RepoListView = Backbone.View.extend({
     el: '.plugin-list',
     tagName: 'div',
     className: 'container',
@@ -266,7 +265,7 @@
       obj.repoUrl = 'https://github.com/' + obj.repo;
     } else {
       var url = data.versions[obj.version].homepage;
-      if(url && url.contains('github')) {
+      if(url && url.indexOf('github') != -1) {
         var regexp = /github\.com(.*)/;
         obj.repo = regexp.exec(url)[1].slice(1).replace(/\.git$/, '');
         obj.repoUrl = 'https://github.com/' + obj.repo;
@@ -294,7 +293,6 @@
   };
 
   var req = function () {
-    console.log('refreshing plugins...');
     NProgress.start();
     $.ajax({
       url: 'http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpplugin%22]&endkey=[%22gulpplugin%22,{}]&group_level=3',
