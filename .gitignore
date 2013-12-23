@@ -1,3 +1,8 @@
 # idea
 .idea/
 *.iml
+
+# node
+bower_components/
+node_modules/
+public/
