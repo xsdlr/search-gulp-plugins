@@ -133,6 +133,10 @@
       '<span class="star-icon glyphicon glyphicon-download center-block"></span> ' +
       '<div class="text-center"><span class="label label-default">${downloads}</span></div>' +
     '</div>' +
+    /*'<div class="col-md-1">' +
+      '<span class="star-icon glyphicon glyphicon-star center-block"></span> ' +
+      '<div class="text-center"><span class="label label-default">${downloads}</span></div>' +
+    '</div>' +*/
     '<div class="col-md-11">' +
       '<h3>' +
       '<a href="${url}">${name}</a> ' +
@@ -161,7 +165,6 @@
 
     initialize: function () {
       this.model.on('change', this.render, this);
-      this.model.on('add', this.render, this);
     },
 
     render: function () {
@@ -169,9 +172,9 @@
       $el.attr('data-plugin-id', this.model.cid);
       $el.html(this.template(this.model.toJSON()));
       if(this.model.get('visible')) {
-        $el.show();
+        $el.fadeIn();
       } else {
-        $el.hide();
+        $el.fadeOut();
       }
       return this;
     },
@@ -218,9 +221,8 @@
 
   completed.events.on('done', function () {
     NProgress.done();
-    repos.sort();
     listView = new RepoListView();
-    listView.render();
+    repos.sort();
   });
 
   // add a plugin list
@@ -247,58 +249,62 @@
   // fetch data
   var fetch = function (data) {
     var repo = new Repo();
-    repos.add(repo);
+    if(repos.pluck('name').indexOf(data.name) == -1) {
 
-    repo.set('name', data.name);
+      repo.set('name', data.name);
 
-    repo.set('description', data.description);
+      repo.set('description', data.description);
 
-    repo.set('version', data['dist-tags'].latest);
+      repo.set('version', data['dist-tags'].latest);
 
-    if(data.repository) {
-      var url = data.repository.url;
-      var regexp = /github\.com(.*)/;
-      repo.set('repo', regexp.exec(url)[1].slice(1).replace(/\.git$/, ''));
-      repo.set('repoUrl', 'https://github.com/' + repo.get('repo'));
-    } else {
-      var url = data.versions[repo.get('version')].homepage;
-      if(url && url.indexOf('github') != -1) {
+      if(data.repository) {
+        var url = data.repository.url;
         var regexp = /github\.com(.*)/;
         repo.set('repo', regexp.exec(url)[1].slice(1).replace(/\.git$/, ''));
         repo.set('repoUrl', 'https://github.com/' + repo.get('repo'));
       } else {
-        repo.set('repo', '');
-        repo.set('repoUrl', '');
+        var url = data.versions[repo.get('version')].homepage;
+        if(url && url.indexOf('github') != -1) {
+          var regexp = /github\.com(.*)/;
+          repo.set('repo', regexp.exec(url)[1].slice(1).replace(/\.git$/, ''));
+          repo.set('repoUrl', 'https://github.com/' + repo.get('repo'));
+        } else {
+          repo.set('repo', '');
+          repo.set('repoUrl', '');
+        }
       }
+
+      repo.set('url' , 'https://npmjs.org/package/' + repo.get('name'));
+
+      repo.set('type', data.versions[repo.get('version')].keywords.filter(function (x) {
+        return x === 'gulpplugin' || x === 'gulpfriendly';
+      })[0]);
+
+      repo.set('downloads', 0);
+
+      repo.finish();
+      repos.add(repo);
+
+
+      $.ajax({
+        url: 'http://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?startkey=[%22' +
+          repo.get('name') +
+          '%22,%20%22' + startMonthISO + '%22]&endkey=[%22' +
+          repo.get('name') +
+          '%22,%20%22' + todayISO + '%22]&group_level=1',
+        dataType: 'jsonp',
+        success: function (data) {
+          if(data.rows[0]) {
+            repo.set('downloads', data.rows[0].value);
+          }
+
+          completed.remove(repo.get('name'));
+        }
+      });
+
+    } else {
+      completed.remove(data.name);
     }
-
-    repo.set('url' , 'https://npmjs.org/package/' + repo.get('name'));
-
-    repo.set('type', data.versions[repo.get('version')].keywords.filter(function (x) {
-      return x === 'gulpplugin' || x === 'gulpfriendly';
-    })[0]);
-
-    repo.finish();
-
-    $.ajax({
-      url: 'http://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?startkey=[%22' +
-        repo.get('name') +
-        '%22,%20%22' + startMonthISO + '%22]&endkey=[%22' +
-        repo.get('name') +
-        '%22,%20%22' + todayISO + '%22]&group_level=1',
-      dataType: 'jsonp',
-      success: function (data) {
-        if(data.rows[0]) {
-          repo.set('downloads', data.rows[0].value);
-        }
-        else {
-          repo.set('downloads', 0);
-        }
-        completed.remove(repo.get('name'));
-      }
-    });
-
-
   };
 
   var req = function () {
@@ -318,5 +324,9 @@
   // http://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?startkey=[%22gulp-grunt%22,%20%222013-12-01%22]&endkey=[%22gulp-grunt%22,%20%222013-12-23%22]&group_level=1
 
   req();
+
+  $(function () {
+    $('.plugin-search').focus();
+  });
 
 })();
