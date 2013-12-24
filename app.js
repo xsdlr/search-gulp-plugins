@@ -2,7 +2,7 @@
 
   // models
   var Repo = Backbone.Model.extend({
-    initialize: function () {
+    finish: function () {
       this.set('noRepo',
         this.get('repo') === '' ? 'none' : '');
       this.set('typeColor',
@@ -14,7 +14,9 @@
 
   var RepoList = Backbone.Collection.extend({
     initialize: function () {
-      this.comparator = 'name';
+      this.comparator = function (model) {
+        return -model.get('downloads');
+      };
     },
     model: Repo
   });
@@ -127,11 +129,11 @@
   var listView;
 
   var pluginTemplate = _.template(
-    /*'<div class="col-md-1">' +
-      '<span class="star-icon glyphicon glyphicon-star center-block"></span> ' +
-      '<div class="text-center"><span class="label label-default">&gt; 9000</span></div>' +
-    '</div>' +*/
-    '<div class="col-md-12">' +
+    '<div class="col-md-1">' +
+      '<span class="star-icon glyphicon glyphicon-download center-block"></span> ' +
+      '<div class="text-center"><span class="label label-default">${downloads}</span></div>' +
+    '</div>' +
+    '<div class="col-md-11">' +
       '<h3>' +
       '<a href="${url}">${name}</a> ' +
       '<small>version ${version}</small>' +
@@ -216,6 +218,7 @@
 
   completed.events.on('done', function () {
     NProgress.done();
+    repos.sort();
     listView = new RepoListView();
     listView.render();
   });
@@ -235,43 +238,67 @@
       });
   };
 
+  var today = new Date;
+  var todayISO = today.toISOString().slice(0, 10);
+
+  var startMonth = new Date(today.getFullYear(), today.getMonth());
+  var startMonthISO = startMonth.toISOString().slice(0, 10);
+
   // fetch data
   var fetch = function (data) {
-    var obj = {};
+    var repo = new Repo();
+    repos.add(repo);
 
-    obj.name = data.name;
+    repo.set('name', data.name);
 
-    obj.description = data.description;
+    repo.set('description', data.description);
 
-    obj.version = data['dist-tags'].latest;
+    repo.set('version', data['dist-tags'].latest);
 
     if(data.repository) {
       var url = data.repository.url;
       var regexp = /github\.com(.*)/;
-      obj.repo = regexp.exec(url)[1].slice(1).replace(/\.git$/, '');
-      obj.repoUrl = 'https://github.com/' + obj.repo;
+      repo.set('repo', regexp.exec(url)[1].slice(1).replace(/\.git$/, ''));
+      repo.set('repoUrl', 'https://github.com/' + repo.get('repo'));
     } else {
-      var url = data.versions[obj.version].homepage;
+      var url = data.versions[repo.get('version')].homepage;
       if(url && url.indexOf('github') != -1) {
         var regexp = /github\.com(.*)/;
-        obj.repo = regexp.exec(url)[1].slice(1).replace(/\.git$/, '');
-        obj.repoUrl = 'https://github.com/' + obj.repo;
+        repo.set('repo', regexp.exec(url)[1].slice(1).replace(/\.git$/, ''));
+        repo.set('repoUrl', 'https://github.com/' + repo.get('repo'));
       } else {
-        obj.repo = '';
-        obj.repoUrl = '';
+        repo.set('repo', '');
+        repo.set('repoUrl', '');
       }
     }
 
-    obj.url = 'https://npmjs.org/package/' + obj.name;
+    repo.set('url' , 'https://npmjs.org/package/' + repo.get('name'));
 
-    obj.type = data.versions[obj.version].keywords.filter(function (x) {
+    repo.set('type', data.versions[repo.get('version')].keywords.filter(function (x) {
       return x === 'gulpplugin' || x === 'gulpfriendly';
-    })[0];
+    })[0]);
 
-    var r = new Repo(obj);
-    repos.add(r);
+    repo.finish();
 
-    completed.remove(obj.name);
+    $.ajax({
+      url: 'http://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?startkey=[%22' +
+        repo.get('name') +
+        '%22,%20%22' + startMonthISO + '%22]&endkey=[%22' +
+        repo.get('name') +
+        '%22,%20%22' + todayISO + '%22]&group_level=1',
+      dataType: 'jsonp',
+      success: function (data) {
+        if(data.rows[0]) {
+          repo.set('downloads', data.rows[0].value);
+        }
+        else {
+          repo.set('downloads', 0);
+        }
+        completed.remove(repo.get('name'));
+      }
+    });
+
+
   };
 
   var req = function () {
@@ -287,6 +314,8 @@
       success: plugins
     });
   };
+
+  // http://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?startkey=[%22gulp-grunt%22,%20%222013-12-01%22]&endkey=[%22gulp-grunt%22,%20%222013-12-23%22]&group_level=1
 
   req();
 
