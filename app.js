@@ -7,7 +7,11 @@
         this.get('repo') === '' ? 'none' : '');
       this.set('typeColor',
         this.get('type') === 'gulpplugin' ? 'info' : 'success');
-      this.set('info', this.get('description') + this.get('name') + this.get('version') + this.get('type') + this.get('repo'));
+      this.set('info', (this.get('description') +
+          this.get('name') +
+          this.get('version') +
+          this.get('type') +
+          this.get('repo')).toLowerCase());
       this.set('visible', true);
     }
   });
@@ -35,7 +39,7 @@
 
     search: function () {
       var $el = $(this.el);
-      var query = $el.val();
+      var query = $el.val().toLowerCase();
       if(query == '') {
         infoView.searched = false;
         _(repos.models).forEach(function (plugin) {
