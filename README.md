@@ -1,6 +1,8 @@
 # search-gulp-plugins
 This is a server-side app with a rich client to search gulp plugins.
 
+__THIS__ is the branch where all development on the new client will happen from now on.
+
 ## Plan
 This repository will be kept for now, while the backend will be constructed at [gratimax/gulp-plugins-api](https://github.com/gratimax/gulp-plugins-api). This backend will most likely be run at a DigitalOcean 'droplet' which Contra has provided.
 
