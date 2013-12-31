@@ -10,8 +10,8 @@ module.exports = (grunt) ->
     'gh-pages':
       options:
         base: 'public'
-        branch: 'master'
-        message: 'Deployed to master automatically'
+        branch: 'gh-pages'
+        message: 'Deployed to gh-pages automatically'
       src: ['**']
 
     clean:
