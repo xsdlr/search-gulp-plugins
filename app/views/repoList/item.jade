@@ -1,0 +1,24 @@
+.col-md-1
+
+    span.star-icon.center-block.glyphicon.glyphicon-download
+
+    .text-center
+        span.label.label-default= downloads
+// for stars
+    .col-md-1
+        span.star-icon.center-block.glyphicon.glyphicon-star
+        .text-center
+            span.label.label-default= stars
+
+.col-md-11
+
+    h3
+        a(href=url)= name
+        small &nbsp;version #{version}
+        small.pull-right
+            | repo&nbsp;
+            em= noRepo
+            a(href=repoUrl)= repo
+
+    p.description= description
+        span.pull-right.label(class='label-#{typeColor}')= type
