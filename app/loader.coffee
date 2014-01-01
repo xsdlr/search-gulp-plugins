@@ -29,7 +29,7 @@ class Loader
     @on 'done', =>
       progress.done()
 
-module.exports = appLoader = new Loader
+module.exports = loader = new Loader
 
 # add a plugin list
 plugins = (data) ->
@@ -43,13 +43,15 @@ plugins = (data) ->
         dataType: "jsonp"
         success: fetch
 
-      appLoader.objects.track name
+      loader.objects.track name
 
+
+toISO = (date) -> date.toISOString().slice 0, 10
 
 today = new Date
-todayISO = today.toISOString().slice(0, 10)
-startMonth = new Date(today.getFullYear(), today.getMonth())
-startMonthISO = startMonth.toISOString().slice(0, 10)
+todayISO = toISO today
+lastMonth = new Date today.getFullYear(), today.getMonth() - 1, today.getDate()
+lastMonthISO = toISO lastMonth
 
 # fetch data
 fetch = (data) ->
@@ -80,16 +82,16 @@ fetch = (data) ->
     repo.finish()
     repoList.add repo
     $.ajax
-      url: "http://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?startkey=[%22" + repo.get("name") + "%22,%20%22" + startMonthISO + "%22]&endkey=[%22" + repo.get("name") + "%22,%20%22" + todayISO + "%22]&group_level=1"
+      url: "http://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?startkey=[%22" + repo.get("name") + "%22,%20%22" + lastMonthISO + "%22]&endkey=[%22" + repo.get("name") + "%22,%20%22" + todayISO + "%22]&group_level=1"
       dataType: "jsonp"
       success: (data) ->
-        repo.set "downloads", data.rows[0].value  if data.rows[0]
-        appLoader.objects.finish repo.get "name"
+        repo.set "downloads", data.rows[0].value if data.rows[0]
+        loader.objects.finish repo.get "name"
 
   else
-    appLoader.objects.finish data.name
+    loader.objects.finish data.name
 
-appLoader.req = ->
+loader.req = ->
   progress.start()
   $.ajax
     url: "http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpplugin%22]&endkey=[%22gulpplugin%22,{}]&group_level=3"
