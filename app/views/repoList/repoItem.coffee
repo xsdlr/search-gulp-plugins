@@ -4,7 +4,7 @@ searchView = require 'views/search/search'
 class RepoItem extends Backbone.View
 
   tagName: 'div'
-  className: 'row plugin panel panel-default'
+  className: 'row plugin'
 
   template: require 'views/repoList/item'
 
@@ -12,18 +12,17 @@ class RepoItem extends Backbone.View
     @listenTo @model, 'change', @render
     @listenTo searchView, 'search', @visible
 
-  render: ->
-
+  render:  ->
     @$el.html @template @model.toJSON()
 
-    if @model.get 'visible'
-      @$el.fadeIn()
+    if @model.get('visible')
+      @$el.show()
     else
-      @$el.fadeOut()
+      @$el.hide()
 
     @
 
   visible: (query) ->
-    @model.set 'visible', @model.matches query
+    @model.set('visible', @model.matches query)
 
 module.exports = RepoItem

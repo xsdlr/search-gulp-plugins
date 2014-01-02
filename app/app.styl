@@ -4,19 +4,38 @@
 body 
   overflow-y scroll
 
-.gulp-logo 
-  background #fff
-  border 2px solid #bbb
+progress-color = #EB4A4B
+
+h1
+  color #2c3e50
+
+#nprogress
+
+  & .bar
+    background progress-color
+
+  & .spinner-icon
+    border-top-color progress-color
+    border-left-color progress-color
+
+  & .peg
+    box-shadow 0 0 10px progress-color, 0 0 5px progress-color
+
+.gulp-logo
   height 80px
 
 .spanner 
   background rgba(243, 243, 243, 0.8)
-  border-bottom 2px solid #ddd
+  //border-bottom 2px solid #ddd
   position fixed
   z-index 1
   top 0
   left 0
   right 0
+
+  /*h1
+    margin-top 15px
+    margin-bottom 15px*/
 
 .row-top 
   margin-top 20px
@@ -25,12 +44,46 @@ body
 .search-bar 
   margin-top 20px
 
-.plugin-info 
+  .plugin-search
+    box-shadow none
+    border 2px solid #ccc
+
+    &:focus
+      border-color #66afe9
+
+    placeholder-color = #bdc3c7
+
+    &:-moz-placeholder
+      color placeholder-color
+
+    &::-moz-placeholder
+      color placeholder-color
+
+    &:-ms-input-placeholder
+      color placeholder-color
+
+    &::-webkit-input-placeholder
+      color placeholder-color
+
+.plugin-info
   margin-top 150px
 
-.plugin 
-  margin-top 30px
-  margin-bottom 30px
+.plugin-list
+  margin-top 15px
+  margin-bottom 50px
+
+.plugin
+  box-shadow none
+  background #f9f9f9
+  margin-bottom 0
+  border-radius 0
+
+  border-bottom 1px solid #ddd
+
+  padding 10px 0px
+
+  a:hover
+    text-decoration none
 
   & .star-icon
     margin-top 20px

@@ -1,8 +1,9 @@
 repoList = require 'models/repo/repoList'
-RepoItem = require 'views/repoList/repoItem'
+searchView = require 'views/search/search'
+RepoItem = null
 loader = require 'loader'
 
-class RepoList extends Backbone.View
+class RepoListView extends Backbone.View
 
   el: '.plugin-list'
 
@@ -12,6 +13,9 @@ class RepoList extends Backbone.View
     @listenTo loader, 'done', @render
 
   render: ->
+    # circular dependency workaround
+    unless RepoItem?
+      RepoItem = require 'views/repoList/repoItem'
 
     for plugin in @collection.models
       item = new RepoItem model: plugin
@@ -19,4 +23,4 @@ class RepoList extends Backbone.View
 
     @
 
-module.exports = new RepoList
+module.exports = new RepoListView
