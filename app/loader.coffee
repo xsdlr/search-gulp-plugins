@@ -63,8 +63,12 @@ fetch = (data) ->
     if data.repository
       url = data.repository.url
       regexp = /github\.com(.*)/
-      repo.set "repo", regexp.exec(url)[1].slice(1).replace(/\.git$/, "")
-      repo.set "repoUrl", "https://github.com/" + repo.get("repo")
+      if url.indexOf('github') isnt -1
+        repo.set "repo", regexp.exec(url)[1].slice(1).replace(/\.git$/, "")
+        repo.set "repoUrl", "https://github.com/" + repo.get("repo")
+      else
+        repo.set "repo", ""
+        repo.set "repoUrl", ""
     else
       url = data.versions[repo.get("version")].homepage
       if url and url.indexOf("github") isnt -1
