@@ -39,7 +39,7 @@ plugins = (data) ->
       name = row.key.slice(1)[0]
 
       $.ajax
-        url: "http://isaacs.iriscouch.org/registry/" + name + ""
+        url: "http://isaacs.iriscouch.com/registry/" + name + ""
         dataType: "jsonp"
         success: fetch
 
@@ -99,10 +99,5 @@ loader.req = ->
   progress.start()
   $.ajax
     url: "http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpplugin%22]&endkey=[%22gulpplugin%22,{}]&group_level=3"
-    dataType: "jsonp"
-    success: plugins
-
-  $.ajax
-    url: "http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpfriendly%22]&endkey=[%22gulpfriendly%22,{}]&group_level=3"
     dataType: "jsonp"
     success: plugins
