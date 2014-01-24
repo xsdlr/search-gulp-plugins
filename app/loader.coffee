@@ -101,3 +101,7 @@ loader.req = ->
     url: "http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulpplugin%22]&endkey=[%22gulpplugin%22,{}]&group_level=3"
     dataType: "jsonp"
     success: plugins
+  $.ajax
+    url: "http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22gulfriendly%22]&endkey=[%22gulpfriendly%22,{}]&group_level=3"
+    dataType: "jsonp"
+    success: plugins
